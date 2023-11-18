@@ -17,18 +17,11 @@ df_test = pd.read_csv("kaggle/input/titanic/test.csv")
 target_column = "Survived"  # 目的変数
 random_seed = 1234        # 乱数固定用
 
-def plot_category(df, column, target_column):
-    # カウント情報
-    print(pd.crosstab(df[column],df[target_column]))
+def missing_value(df):
+    # 欠損値フラグ
+    df["Age_na"] = df["Age"].isnull().astype(np.int64)
 
-    print("各クラス毎の生存率")
-    print(pd.crosstab(df[column],df[target_column], normalize='index'))
+    # 欠損値を中央値で埋める
+    df["Age"].fillna(df["Age"].median(), inplace = True)
 
-    print("生存率に対する各クラスの割合")
-    print(pd.crosstab(df[column],df[target_column], normalize='columns'))
-
-    # plot
-    sns.countplot(df[column], hue=df[target_column])
-    plt.show()
-
-plot_category(df_train, "Pclass", "Survived")
+print(df_train["Age_na"])

@@ -24,4 +24,22 @@ def missing_value(df):
     # 欠損値を中央値で埋める
     df["Age"].fillna(df["Age"].median(), inplace = True)
 
-print(df_train["Age_na"])
+def normalization(df, name):
+    df[name] = (df[name] - df[name].mean()) / df[name].std()
+
+
+# SibSpとParchのダミー化
+def dummy(df):
+    df = pd.get_dummies(df, columns = [
+        'Pclass',
+        'Sex',
+        #'SibSp',
+        #'Parch',
+        "Embarked",
+    ])
+    return df
+
+df_train = dummy(df_train)
+df_test = dummy(df_test)
+
+print(list(df_train.columns))

@@ -312,4 +312,22 @@ def print_correlation(df, columns):
     plt.show()
 
 # 実行
-print_correlation(df_train, select_columns)
+# print_correlation(df_train, select_columns)
+
+# ------ start 提出用コード ------
+# 学習データを作成
+# x = df_train[select_columns].to_numpy()
+# y = df_train[target_column].to_numpy()
+
+# # 出力用データ
+# x_test = df_test[select_columns].to_numpy()
+
+# model = sklearn.linear_model.LogisticRegressionCV(random_state=random_seed)
+# model.fit(x, y)
+# pred_y = model.predict(x_test)
+
+# # 提出用にデータ加工
+# output = pd.DataFrame({'PassengerId': df_test["PassengerId"], 'Survived': pred_y})
+# output.to_csv("LogisticRegressionCV.csv", header=True, index=False)
+# print("Your submission was successfully saved!")
+# ------ finish 提出用コード ------

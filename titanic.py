@@ -53,25 +53,6 @@ submission.to_csv('submission_first.csv', index = False)
 
 scores_accuracy = []
 scores_logloss = []
-# クロスバリデーションを行う
-# 学習データを4つに分割し、うち1つをバリデーションデータとすることを、バリデーションデータを変えて繰り返す。
-kf = KFold(n_splits = 4, shuffle = True, random_state = 71)
-for tr_idx, va_idx in kf.split(train_x):
-    # 学習データを学習データとバリデーションデータに分ける
-    tr_x, va_x = train_x.iloc[tr_idx], train_x.iloc[va_idx]
-    tr_y, va_y = train_y.iloc[tr_idx], train_y.iloc[va_idx]
-
-    model = XGBClassfier(n_estimators = 20, random_state = 71)
-    model.fit(tr_x, tr_y)
-
-    va_pred = model.predict_proba(va_x)[:, 1]
-
-    logloss = sklearn.metrics.log_loss(va_y, va_pred)
-    accuracy = sklearn.metrics.acurracy_score(va_y, va_pred > 0.5)
-
-    # そのfoldのスコアを保存する
-    scores_logloss.append(logloss)
-    scores_accuracy.append(accuracy)
 
 # 各foldのスコアの平均を出力する
 logloss = np.mean(scores_logloss)
@@ -93,3 +74,35 @@ for max_depth, min_child_weight in param_combinations:
     scores_fold = []
 
     kf = KFold(n_splits = 4, shuffle = True, random_state = 123456)
+
+    # クロスバリデーションを行う
+    # 学習データを4つに分割し、うち1つをバリデーションデータとすることを、バリデーションデータを変えて繰り返す。
+    for tr_idx, va_idx in kf.split(train_x):
+
+    # 学習データを学習データとバリデーションデータに分ける
+        tr_x, va_x = train_x.iloc[tr_idx], train_x.iloc[va_idx]
+        tr_y, va_y = train_y.iloc[tr_idx], train_y.iloc[va_idx]
+
+        # モデルの学習を行う
+        model = XGBClassfier(n_estimators = 20, random_state = 71)
+        model.fit(tr_x, tr_y)
+
+        # バリデーションデータでのスコアを計算し、保存する
+        va_pred = model.predict_proba(va_x)[:, 1]
+
+        logloss = sklearn.metrics.log_loss(va_y, va_pred)
+        accuracy = sklearn.metrics.acurracy_score(va_y, va_pred > 0.5)
+
+        scores_fold.append(logloss)
+        
+    # 各foldのスコアを平均する
+    score_mean = np.mean(scores_fold)
+
+    # そのfoldのスコアを保存する
+    params.append((max_depth, min_child_weight))
+    scores.append(score_mean)
+
+best_idx = np.argsort(scores)[0]
+best_param = params[best_idx]
+print(f"max_depth: {best_param[0]}, min_child_weight: {best_param[1]}")
+# max_depth = 7, min_child_weight = 2.0のスコアが最も良かった

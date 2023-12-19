@@ -5,7 +5,7 @@
 # 平方根を取ることで計算される。
 
 #使用するライブラリ
-from sklearn.metrics import mean_squared_error, mean_squared_log_error, mean_absolute_error, r2_score, confusion_matrix
+from sklearn.metrics import mean_squared_error, mean_squared_log_error, mean_absolute_error, r2_score, confusion_matrix, accuracy_score
 import numpy as np
 
 # y_trueが真の値、y_predが予測値
@@ -51,3 +51,8 @@ fp = np.sum((np.array(y_true) == 0) & (np.array(y_pred) == 1))
 
 # 正例と予測して負例（偽陽性）
 fn = np.sum((np.array(y_true) == 1) & (np.array(y_pred) == 0))
+
+confusion_matrix1 = np.array([[tp, fp], [fn, tn]])
+confusion_matrix2 = confusion_matrix(y_true,y_pred)
+
+accuracy = accuracy_score(y_true, y_true)
